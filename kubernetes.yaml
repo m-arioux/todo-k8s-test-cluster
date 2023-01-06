@@ -1,0 +1,164 @@
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: minimal-ingress
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: todo-api.local-cluster
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: todo-api-service
+                port:
+                  number: 80
+    - host: todo-app.local-cluster
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: todo-app-service
+                port:
+                  number: 80
+
+# APP
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: todo-app-service
+  namespace: default
+spec:
+  selector:
+    app: todo-app
+  type: ClusterIP
+  sessionAffinity: None
+  sessionAffinityConfig:
+    clientIP:
+      timeoutSeconds: 10800
+  ports:
+    - name: todo-app
+      protocol: TCP
+      port: 80
+      targetPort: 5000
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: todo-app
+  namespace: default
+  labels:
+    app: todo-app
+spec:
+  selector:
+    matchLabels:
+      app: todo-app
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: todo-app
+    spec:
+      containers:
+        - name: todo-app
+          image: m-arioux/todo-app:latest
+          imagePullPolicy: Never
+          resources:
+            limits:
+              memory: 100M
+              cpu: "0.5"
+          env:
+            - name: API_BASE_URL
+              value: "http://todo-api.local-cluster"
+          ports:
+            - containerPort: 5000
+
+# API
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: todo-api-service
+  namespace: default
+spec:
+  selector:
+    app: todo-api
+  type: ClusterIP
+  sessionAffinity: None
+  sessionAffinityConfig:
+    clientIP:
+      timeoutSeconds: 10800
+  ports:
+    - name: todo-api-service
+      protocol: TCP
+      port: 80
+      targetPort: 80
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: todo-api
+  namespace: default
+  labels:
+    app: todo-api
+spec:
+  selector:
+    matchLabels:
+      app: todo-api
+  replicas: 2
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: todo-api
+    spec:
+      # initContainers:
+      # Init containers are exactly like regular containers, except:
+      # - Init containers always run to completion.
+      # - Each init container must complete successfully before the next one starts.
+      containers:
+        - name: todo-api
+          image: m-arioux/todo-api:latest
+          imagePullPolicy: Never
+          resources:
+            limits:
+              cpu: 100m
+              memory: 100Mi
+          # livenessProbe:
+          #   tcpSocket:
+          #     port: 80
+          #   initialDelaySeconds: 5
+          #   timeoutSeconds: 5
+          #   successThreshold: 1
+          #   failureThreshold: 3
+          #   periodSeconds: 10
+          # readinessProbe:
+          #   httpGet:
+          #     path: /_status/healthz
+          #     port: 80
+          #   initialDelaySeconds: 5
+          #   timeoutSeconds: 2
+          #   successThreshold: 1
+          #   failureThreshold: 3
+          #   periodSeconds: 10
+          env:
+            - name: CorsOrigins
+              value: "http://todo-app.local-cluster/"
+          ports:
+            - containerPort: 80
+              name: todo-api
+      restartPolicy: Always
