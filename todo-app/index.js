@@ -1,5 +1,4 @@
 const express = require("express");
-const { stringReplace } = require("string-replace-middleware");
 const path = require("path");
 const fs = require("fs");
 
@@ -20,12 +19,5 @@ app.get("/", (req, res) => {
     res.send(content);
   });
 });
-
-app.use(
-  stringReplace(
-    { "{{API_BASE_URL}}": apiBaseUrl },
-    { contentTypeFilterRegexp: /.*/ }
-  )
-);
 
 app.listen(5000);
