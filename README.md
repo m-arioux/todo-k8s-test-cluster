@@ -6,6 +6,14 @@ The goal is only to have a back-end, a front-end _and a database_ (will do in th
 
 The functionnalities are very basic, you can only get the list of todos from the back-end and display them in the app. The goal is only to make a Single Page Application successfully communicate with a back-end in a cluster with an Ingress.
 
+## The technologies
+
+The front-end is a simple vanilla HTML page that fetch the data from the back-end with the fetch API.
+
+It is served by a simple express.JS server that replaces the string __{{API_BASE_URL}}__ in the HTML for the real given Url.
+
+The back-end is a .NET 6 webapi built with the minimal API.
+
 # To launch for Docker
 
 ## API
