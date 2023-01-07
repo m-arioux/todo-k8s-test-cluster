@@ -49,4 +49,4 @@ Then, get the IP of your cluster with the command `minikube ip` and point these 
 - todo-api.local-cluster
 - todo-app.local-cluster
 
-If everything is set correctly, go to http://todo-app.local-cluster in your browser and you should see the app with the 2 todos send from the back-end.
+If everything is set correctly, go to http://todo-app.local-cluster in your browser and you should see the app with the 2 todos send from the back-end took from the database.
