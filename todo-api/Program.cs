@@ -4,6 +4,9 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Configuration.AddEnvironmentVariables();
 
+builder.Services.Configure<TodoDatabaseSettings>(
+    builder.Configuration.GetSection("TodoDatabase"));
+
 builder.Services.AddTransient<TodoRepository>();
 
 var corsOrigins = builder.Configuration["CorsOrigins"];

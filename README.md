@@ -2,17 +2,21 @@
 
 This is a little project I wanted to do to practice using Kubernetes.
 
-The goal is only to have a back-end, a front-end _and a database_ (will do in the future) builded into their own Docker image in a functionning Kubernetes cluster.
+The goal is only to have a back-end, a front-end and a database builded into their own Docker image in a functionning Kubernetes cluster.
 
-The functionnalities are very basic, you can only get the list of todos from the back-end and display them in the app. The goal is only to make a Single Page Application successfully communicate with a back-end in a cluster with an Ingress.
+The functionnalities are very basic, you can only get the list of todos from the database and display them in the app. The goal is only to make a Single Page Application successfully communicate with a back-end in a cluster with an Ingress.
+
+Please don't take too much of this code as an example, all the code and config could be organized better. I made this quickly to learn, not to have a maintainable app in production.
 
 ## The technologies
 
 The front-end is a simple vanilla HTML page that fetch the data from the back-end with the fetch API.
 
-It is served by a simple express.JS server that replaces the string __{{API_BASE_URL}}__ in the HTML for the real given Url.
+It is served by a simple express.JS server that replaces the string **{{API_BASE_URL}}** in the HTML for the real given Url.
 
 The back-end is a .NET 6 webapi built with the minimal API.
+
+The database is MongoDB. It will use a folder onto the host for the data. Obviously, for production you should use an existing cloud provider to not lose any data, but for local execution this is the best way.
 
 # To launch for Docker
 

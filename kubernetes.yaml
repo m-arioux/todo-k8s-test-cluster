@@ -158,6 +158,18 @@ spec:
           env:
             - name: CorsOrigins
               value: "http://todo-app.local-cluster/"
+            - name: MONGO_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: mongo-creds
+                  key: username
+            - name: MONGO_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mongo-creds
+                  key: password
+            - name: TodoDatabase__ConnectionString
+              value: "mongodb://$(MONGO_USERNAME):$(MONGO_PASSWORD)@mongo:27017/?authMechanism=SCRAM-SHA-256&tls=false&authSource=admin"
           ports:
             - containerPort: 80
               name: todo-api

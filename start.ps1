@@ -10,3 +10,4 @@ docker build ./todo-api -t m-arioux/todo-api
 docker build ./todo-app -t m-arioux/todo-app
 
 kubectl apply -f kubernetes.yaml
+kubectl apply -f database-kubernetes.yaml
